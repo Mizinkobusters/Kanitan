@@ -2,10 +2,10 @@
 
 #include "Common.h"
 
-class Title : public App::Scene
+class Option : public App::Scene
 {
 public:
-	Title(const InitData& init);
+	Option(const InitData& init);
 	void update() override;
 	void draw() const override;
 
@@ -18,4 +18,7 @@ private:
 		U"オプション",
 		U"おわる"
 	};
+
+private:
+	Rect buttonQuit{ 550, 520, 250, 70 };
 };

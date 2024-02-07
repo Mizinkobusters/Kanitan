@@ -3,8 +3,6 @@
 Game::Game(const InitData& init)
 	: IScene{ init }
 {
-	// グローバルオーディオを一斉停止
-	GlobalAudio::PauseAll();
 	// BGMを流す
 	AudioAsset(U"Game").play(MixBus0);
 }
@@ -22,7 +20,7 @@ void Game::update()
 	ConsumePower(deltaTime);
 	RegeneratePower(deltaTime);
 	PlaceMarker(deltaTime);
-	ClearMarker(deltaTime);
+	ClearMarker();
 	CheckCollision();
 	OnInvincible(deltaTime);
 }
@@ -37,10 +35,19 @@ void Game::draw() const
 
 	// プレイヤーを描画
 	{
-		// 無敵中なら半透明で描画する
-		playerIsInvincible ?
-			TextureAsset(U"Kani").scaled(0.5).drawAt(playerPos, ColorF{ 1.0, 0.5 })
-			: TextureAsset(U"Kani").scaled(0.5).drawAt(playerPos);
+		// 気絶状態ならヒヨコで描画
+		if (playerIsStan)
+		{
+			TextureAsset(U"StanEffect").scaled(0.5).drawAt(playerPos);
+		}
+		else
+		{
+			// 無敵中なら半透明で描画する
+			playerIsInvincible ?
+				TextureAsset(U"Kani").scaled(0.5).drawAt(playerPos, ColorF{ 1.0, 0.5 })
+				: TextureAsset(U"Kani").scaled(0.5).drawAt(playerPos);
+		}
+
 	}
 
 	// マーカーを表示
@@ -57,6 +64,12 @@ void Game::draw() const
 		{
 			TextureAsset(U"Enemy{}"_fmt(a.type)).scaled(0.5).drawAt(a.pos);
 		}
+	}
+
+	// トラップ範囲を表示
+	{
+		// 矩形を描画
+		trapRange.draw(ColorF{ 0.9, 0.1, 0.1, 0.55 });
 	}
 
 	// デバッグ情報を描画
@@ -125,6 +138,13 @@ void Game::MovePlayer(const double deltaTime)
 		return;
 	}
 
+	//プレイヤーの移動処理
+#if 1
+	Vec2 cursor = Cursor::PosF();
+	double t = PLAYER_SPEED * deltaTime;
+	playerPos = playerPos.lerp(cursor, t);
+
+#else
 	if (KeyLeft.pressed())
 	{
 		playerPos.x -= (PLAYER_SPEED * deltaTime);
@@ -141,6 +161,7 @@ void Game::MovePlayer(const double deltaTime)
 	{
 		playerPos.y += (PLAYER_SPEED * deltaTime);
 	}
+#endif
 
 	// プレイヤーが画面外に出ないようにする
 	playerPos.x = Clamp(playerPos.x, 0.0, SCREEN_SIZE.x);
@@ -153,8 +174,8 @@ void Game::MovePlayer(const double deltaTime)
 // プレイヤー行動時のコスト消費に関する処理
 void Game::ConsumePower(const double deltaTime)
 {
-	// スペースキーを押している間は体力を消費し続ける
-	if (KeySpace.pressed())
+	// スペースキーを押している間かつプレイヤーが行動可能時は体力を消費し続ける
+	if (MouseR.pressed() && !playerIsStan)
 	{
 		playerPower -= (PLAYER_COST * deltaTime);
 	}
@@ -163,6 +184,7 @@ void Game::ConsumePower(const double deltaTime)
 	if (playerPower <= 0.0)
 	{
 		playerIsStan = true;
+		AudioAsset(U"Stan").play();
 	}
 
 	// プレイヤーの体力が範囲外にならないようにする
@@ -172,8 +194,8 @@ void Game::ConsumePower(const double deltaTime)
 // プレイヤーの体力を徐々に回復する処理
 void Game::RegeneratePower(const double deltaTime)
 {
-	// スペースキーが押されていない間は体力が回復し続ける
-	if (!KeySpace.pressed())
+	// 右クリックされていない間は体力が回復し続ける
+	if (!MouseR.pressed())
 	{
 		playerPower += (POWER_REGENERATION * deltaTime);
 	}
@@ -191,7 +213,7 @@ void Game::RegeneratePower(const double deltaTime)
 // プレイヤーが行動している間マーカーを設置する処理
 void Game::PlaceMarker(const double deltaTime)
 {
-	if (!KeySpace.pressed())
+	if (!MouseR.pressed())
 	{
 		return;
 	}
@@ -208,6 +230,16 @@ void Game::PlaceMarker(const double deltaTime)
 			markers.pop_front();
 		}
 
+		// 同じ位置にマーカーが設置されているかチェック
+		for (const auto& m : markers)
+		{
+			// すでに設置されていれば何もしない
+			if (m == playerPos)
+			{
+				return;
+			}
+		}
+
 		// 新規のマーカーを設置
 		markers.push_back(playerPos);
 	}
@@ -219,29 +251,29 @@ void Game::PlaceMarker(const double deltaTime)
 }
 
 // プレイヤーが行動していない間の処理
-void Game::ClearMarker(const double deltaTime)
+void Game::ClearMarker()
 {
-	if (KeySpace.pressed())
+	if (MouseR.pressed())
 	{
+		return;
+	}
+
+	// マーカーが規定数設置されていなかったら設置済みマーカーを削除
+	if (markers.size() != MAX_MARKER)
+	{
+		markers.clear();
 		return;
 	}
 
 	// マーカーが既定数設置されていたら範囲内の敵を爆破する処理
-	if (markers.size() != MAX_MARKER)
-	{
-		return;
-	}
-
 	// 範囲を表す矩形を作成
-	Quad q = { markers[0], markers[1], markers[2], markers[3] };
+	trapRange = { markers[0], markers[1], markers[2], markers[3] };
 
-	// 矩形を描画
-	q.draw(ColorF{ 1.0, 0.2 });
 
 	// 敵が範囲内に居たらスコアを加算
 	for (auto iter = enemys.begin(); iter != enemys.end();)
 	{
-		if (q.intersects(iter->collision))
+		if (trapRange.intersects(iter->collision))
 		{
 			// キルカウント加算
 			gameKillCount++;
@@ -253,6 +285,7 @@ void Game::ClearMarker(const double deltaTime)
 			playerPower += POWER_REGENERATION;
 			// 敵削除
 			iter = enemys.erase(iter);
+			AudioAsset(U"Attack").play();
 		}
 		else
 		{
@@ -297,6 +330,8 @@ void Game::CheckCollision()
 			playerLife--;
 			// 無敵フラグを立てる
 			playerIsInvincible = true;
+			//SEを鳴らす
+			AudioAsset(U"Damage").play();
 		}
 		else
 		{

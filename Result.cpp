@@ -3,10 +3,8 @@
 Result::Result(const InitData& init)
 	: IScene{ init }
 {
-	// グローバルオーディオを一斉停止
-	GlobalAudio::PauseAll();
 	// BGMを流す
-	AudioAsset(U"Result").play(MixBus0);
+	AudioAsset(U"Result").play();
 
 	// ランクを算出
 	{
@@ -48,6 +46,7 @@ void Result::update()
 	if (buttonRetry.leftClicked())
 	{
 		changeScene(State_Countdown);
+		AudioAsset(U"Select").play();
 	}
 	else if (buttonQuit.leftClicked())
 	{

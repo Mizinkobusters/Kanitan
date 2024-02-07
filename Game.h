@@ -5,10 +5,10 @@
 class Game : public App::Scene
 {
 	// プレイヤーの移動速度
-	static inline const double PLAYER_SPEED = 250.0;
+	static inline const double PLAYER_SPEED = 1.25;
 
 	// プレイヤー行動時の消費コスト
-	static inline const double PLAYER_COST = 5.0;
+	static inline const double PLAYER_COST = 7.5;
 
 	// 設置可能マーカー数
 	static inline const int32 MAX_MARKER = 4;
@@ -55,6 +55,9 @@ private:
 	// マーカーの位置を格納する配列
 	Array<Vec2> markers;
 
+	// トラップ描画用
+	Quad trapRange;
+
 	// ゲーム用タイマー
 	double gameTimer = 30.0;
 
@@ -88,7 +91,7 @@ private:
 	void ConsumePower(const double deltaTime);
 	void RegeneratePower(const double deltaTime);
 	void PlaceMarker(const double deltaTime);
-	void ClearMarker(const double deltaTime);
+	void ClearMarker();
 	void CheckCollision();
 	void OnInvincible(const double deltaTime);
 	void SaveData();

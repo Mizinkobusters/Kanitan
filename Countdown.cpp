@@ -3,7 +3,10 @@
 Countdown::Countdown(const InitData& init)
 	: IScene{ init }
 {
-
+	AudioAsset(U"Title").stop();
+	AudioAsset(U"Game").stop();
+	AudioAsset(U"Result").stop();
+	AudioAsset(U"Sazanami").stop();
 }
 
 void Countdown::update()
@@ -27,10 +30,15 @@ void Countdown::draw() const
 
 	// 文字を表示
 	{
-		timer - 0.5 > 0.5 ?
-			FontAsset(U"Common")(U"{:.0f}"_fmt(timer - 0.5)).drawAt(100, Scene::CenterF())
-			: FontAsset(U"Common")(U"START!!!").drawAt(100, Scene::CenterF());
-
+		if (timer - 0.5 > 0.5)
+		{
+			FontAsset(U"Common")(U"{:.0f}"_fmt(timer - 0.5)).drawAt(100, Scene::CenterF());
+			AudioAsset(U"Countdown").play();
+		}
+		else
+		{
+			FontAsset(U"Common")(U"START!!!").drawAt(100, Scene::CenterF());
+		}
 	}
 
 }

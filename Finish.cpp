@@ -3,7 +3,12 @@
 Finish::Finish(const InitData& init)
 	: IScene{ init }
 {
+	AudioAsset(U"Title").stop();
+	AudioAsset(U"Game").stop();
+	AudioAsset(U"Result").stop();
+	AudioAsset(U"Sazanami").stop();
 
+	AudioAsset(U"Finish").play();
 }
 
 void Finish::update()

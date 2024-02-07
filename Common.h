@@ -9,6 +9,7 @@ enum State
 	State_Finish,
 	State_Result,
 	State_Credit,
+	State_Option,
 };
 
 // ゲーム終了の原因
