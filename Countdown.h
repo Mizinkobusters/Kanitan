@@ -10,5 +10,5 @@ public:
 	void draw() const override;
 
 private:
-	double timer = 3.5;
+	double timer = 3.0;
 };

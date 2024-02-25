@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Common.h"
+#include "SimpleButton.h"
 
 class Result : public App::Scene
 {
@@ -10,16 +11,12 @@ public:
 	void draw() const override;
 
 private:
-	enum Rank
-	{
-		Rank_S,
-		Rank_A,
-		Rank_B,
-		Rank_C,
-		Rank_D,
-	};
 	Rank rank;
 
-	Rect buttonRetry{ 0, 520, 250, 70 };
-	Rect buttonQuit{ 550, 520, 250, 70 };
+	RectF retryRect{ 550, 520, 250, 70 };
+	SimpleButton* retryButton;
+	RectF quitRect{ 0, 520, 250, 70 };
+	SimpleButton* quitButton;
+
+	SimpleButton::ButtonStyle buttonStyle;
 };

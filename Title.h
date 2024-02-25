@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Common.h"
+#include "SimpleButton.h"
 
 class Title : public App::Scene
 {
@@ -10,7 +11,9 @@ public:
 	void draw() const override;
 
 private:
-	Array<RectF> buttons;
+	Array<RectF> menuRects;
+	Array<SimpleButton*> menuButtons;
+	SimpleButton::ButtonStyle menuStyle;
 	Array<String> texts =
 	{
 		U"はじめる",
@@ -18,4 +21,7 @@ private:
 		U"オプション",
 		U"おわる"
 	};
+
+	RenderTexture blur{ TextureAsset(U"BG0").size() };
+	RenderTexture internalTex{ TextureAsset(U"BG0").size() };
 };

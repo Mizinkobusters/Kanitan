@@ -11,9 +11,9 @@ Countdown::Countdown(const InitData& init)
 
 void Countdown::update()
 {
-	if (timer <= 0)
+	if (timer <= 0.0)
 	{
-		changeScene(State_Game, 0);
+		changeScene(State_Game, 0.0s);
 	}
 	else
 	{
@@ -30,14 +30,14 @@ void Countdown::draw() const
 
 	// 文字を表示
 	{
-		if (timer - 0.5 > 0.5)
+		if (timer <= 0.0)
 		{
-			FontAsset(U"Common")(U"{:.0f}"_fmt(timer - 0.5)).drawAt(100, Scene::CenterF());
-			AudioAsset(U"Countdown").play();
+			FontAsset(U"Common")(U"START!!!").drawAt(100, Scene::CenterF());
 		}
 		else
 		{
-			FontAsset(U"Common")(U"START!!!").drawAt(100, Scene::CenterF());
+			FontAsset(U"Common")(U"{:.0f}"_fmt(timer)).drawAt(100, Scene::CenterF());
+			AudioAsset(U"Countdown").setVolume(getData().valueSE).play();
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include "Title.h"
+#include "StageSelect.h"
 #include "Countdown.h"
 #include "Game.h"
 #include "Finish.h"
@@ -26,19 +27,20 @@ void Main()
 	TextureAsset::Register(U"Enemy0", U"🐟"_emoji);
 	TextureAsset::Register(U"Enemy1", U"🐠"_emoji);
 	TextureAsset::Register(U"Enemy2", U"🐡"_emoji);
-	TextureAsset::Register(U"Enemy3", U"🐳"_emoji);
-	TextureAsset::Register(U"Enemy4", U"🦈"_emoji);
+	TextureAsset::Register(U"Enemy3", U"🐙"_emoji);
 
 	TextureAsset::Register(U"BombEffect", U"💥"_emoji);
 	TextureAsset::Register(U"StanEffect", U"🐣"_emoji);
+
+	TextureAsset::Register(U"Trophy", U"🏆"_emoji);
 
 	TextureAsset::Register(U"BG0", U"Assets/Textures/bg_nangoku.jpg");
 	TextureAsset::Register(U"BG1", U"Assets/Textures/bg_natural_ocean.jpg");
 
 	// オーディオアセット登録
-	AudioAsset::Register(U"Title", U"Assets/Audios/Happy_late_summer.mp3");
-	AudioAsset::Register(U"Game", U"Assets/Audios/FESTIVAL.mp3");
-	AudioAsset::Register(U"Result", U"Assets/Audios/Result.mp3");
+	AudioAsset::Register(U"Title", U"Assets/Audios/Happy_late_summer.mp3", Loop::Yes);
+	AudioAsset::Register(U"Game", U"Assets/Audios/FESTIVAL.mp3", Loop::Yes);
+	AudioAsset::Register(U"Result", U"Assets/Audios/Result.mp3", Loop::Yes);
 
 	AudioAsset::Register(U"Trap", U"Assets/Audios/Trap.mp3");
 	AudioAsset::Register(U"Attack", U"Assets/Audios/Attack.mp3");
@@ -49,11 +51,12 @@ void Main()
 	AudioAsset::Register(U"Finish", U"Assets/Audios/Finish.mp3");
 	AudioAsset::Register(U"Mouseover", U"Assets/Audios/Mouseover.mp3");
 
-	AudioAsset::Register(U"Sazanami", U"Assets/Audios/Sazanami.mp3");
+	AudioAsset::Register(U"Sazanami", U"Assets/Audios/Sazanami.mp3", Loop::Yes);
 
 	// シーンを登録
 	App manager;
 	manager.add<Title>(State_Title);
+	manager.add<StageSelect>(State_StageSelect);
 	manager.add<Countdown>(State_Countdown);
 	manager.add<Game>(State_Game);
 	manager.add<Finish>(State_Finish);

@@ -8,7 +8,7 @@ Finish::Finish(const InitData& init)
 	AudioAsset(U"Result").stop();
 	AudioAsset(U"Sazanami").stop();
 
-	AudioAsset(U"Finish").play();
+	AudioAsset(U"Finish").setVolume(getData().valueSE).play();
 }
 
 void Finish::update()
@@ -34,7 +34,7 @@ void Finish::draw() const
 	{
 		for (const auto& a : getData().enemys)
 		{
-			TextureAsset(U"Enemy{}"_fmt(a.type)).scaled(0.5).drawAt(a.pos);
+			a->draw();
 		}
 	}
 

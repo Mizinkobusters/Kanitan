@@ -4,7 +4,8 @@ Result::Result(const InitData& init)
 	: IScene{ init }
 {
 	// BGMを流す
-	AudioAsset(U"Result").play();
+	double value = getData().valueBGM / 10;
+	AudioAsset(U"Result").setVolume(value).play();
 
 	// ランクを算出
 	{
@@ -15,15 +16,15 @@ Result::Result(const InitData& init)
 		}
 		else // それ以外ならスコアに応じてS～Cにする
 		{
-			if (getData().lastScore < 10)
+			if (getData().lastScore < Rank_B)
 			{
 				rank = Rank_C;
 			}
-			else if (getData().lastScore < 20)
+			else if (getData().lastScore < Rank_A)
 			{
 				rank = Rank_B;
 			}
-			else if (getData().lastScore < 30)
+			else if (getData().lastScore < Rank_S)
 			{
 				rank = Rank_A;
 			}
@@ -33,22 +34,23 @@ Result::Result(const InitData& init)
 			}
 		}
 	}
+
+	// ボタンスタイルを設定
+	buttonStyle = SimpleButton::ButtonStyle(Palette::Silver, Palette::Deepskyblue, U"Common", { 40,0 }, 40.0);
+
+	// ボタンを定義
+	retryButton = new SimpleButton(retryRect, U"もう一度！", buttonStyle, true);
+	quitButton = new SimpleButton(quitRect, U"タイトルへ", buttonStyle, true);
 }
 
 void Result::update()
 {
-	if (buttonRetry.stretched(40, 0).mouseOver()
-		|| buttonQuit.stretched(40, 0).mouseOver())
+	if (retryButton->isLeftClicked())
 	{
-		Cursor::RequestStyle(CursorStyle::Hand);
+		changeScene(State_Countdown, 0.5s);
+		AudioAsset(U"Select").setVolume(getData().valueSE).play();
 	}
-
-	if (buttonRetry.leftClicked())
-	{
-		changeScene(State_Countdown);
-		AudioAsset(U"Select").play();
-	}
-	else if (buttonQuit.leftClicked())
+	else if (quitButton->isLeftClicked())
 	{
 		changeScene(State_Title);
 	}
@@ -64,8 +66,8 @@ void Result::draw() const
 	// リザルトを表示
 	{
 		Vec2 center{ 50, 125 };
-		FontAsset(U"Common")(U"Result").drawBase(75, center.movedBy(4, 4), ColorF{ 0.0,0.5 });
-		FontAsset(U"Common")(U"Result").drawBase(75, center, Palette::Deepskyblue);
+		FontAsset(U"Common")(U"リザルト").drawBase(75, center.movedBy(4, 4), ColorF{ 0.0,0.5 });
+		FontAsset(U"Common")(U"リザルト").drawBase(75, center, Palette::Deepskyblue);
 
 
 		FontAsset(U"Common")(U" スコア: {:>4}"_fmt(getData().lastScore))
@@ -78,7 +80,7 @@ void Result::draw() const
 			.stretched(50, 5)
 			.shearedX(-40)
 			.drawFrame(3, Palette::Deepskyblue);
-		FontAsset(U"Common")(U" 倒した敵の数: {:>4}"_fmt(getData().lastKillCount))
+		FontAsset(U"Common")(U" 捕獲した数: {:>4}"_fmt(getData().lastKillCount))
 			.draw(40, 0, 375)
 			.stretched(100, 5)
 			.shearedX(-40)
@@ -117,28 +119,7 @@ void Result::draw() const
 
 	// ボタンを表示
 	{
-		// マウスオーバー時
-		if (buttonRetry.stretched(40, 0).mouseOver())
-		{
-			buttonRetry.stretched(40, 0).rounded(40).draw(Palette::Silver);
-			FontAsset(U"Common")(U"リトライ").drawAt(40, buttonRetry.center(), Palette::Deepskyblue);
-		}
-		else
-		{
-			buttonRetry.stretched(40, 0).rounded(40).drawFrame(3, Palette::Silver);
-			FontAsset(U"Common")(U"リトライ").drawAt(40, buttonRetry.center(), Palette::Silver);
-		}
-
-		// マウスオーバー時
-		if (buttonQuit.stretched(40, 0).mouseOver())
-		{
-			buttonQuit.stretched(40, 0).rounded(40).draw(Palette::Silver);
-			FontAsset(U"Common")(U"タイトルへ").drawAt(40, buttonQuit.center(), Palette::Deepskyblue);
-		}
-		else
-		{
-			buttonQuit.stretched(40, 0).rounded(40).drawFrame(3, Palette::Silver);
-			FontAsset(U"Common")(U"タイトルへ").drawAt(40, buttonQuit.center(), Palette::Silver);
-		}
+		quitButton->draw();
+		retryButton->draw();
 	}
 }

@@ -115,11 +115,22 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBlow.cpp" />
+    <ClCompile Include="EnemyFish.cpp" />
+    <ClCompile Include="EnemyOctopus.cpp" />
+    <ClCompile Include="EnemyTropical.cpp" />
     <ClCompile Include="Finish.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Gimmick.cpp" />
+    <ClCompile Include="GimmickInk.cpp" />
+    <ClCompile Include="GimmickSpike.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Option.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Result.cpp" />
+    <ClCompile Include="SimpleButton.cpp" />
+    <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -323,11 +334,22 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Countdown.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBlow.h" />
+    <ClInclude Include="EnemyFish.h" />
+    <ClInclude Include="EnemyOctopus.h" />
+    <ClInclude Include="EnemyTropical.h" />
     <ClInclude Include="Finish.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInfo.h" />
+    <ClInclude Include="Gimmick.h" />
+    <ClInclude Include="GimmickInk.h" />
+    <ClInclude Include="GimmickSpike.h" />
     <ClInclude Include="Option.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Result.h" />
+    <ClInclude Include="SimpleButton.h" />
+    <ClInclude Include="StageSelect.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Title.h" />
   </ItemGroup>

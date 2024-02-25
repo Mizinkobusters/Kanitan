@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Common.h"
+#include "Enemy.h"
 
 class Game : public App::Scene
 {
@@ -14,7 +15,7 @@ class Game : public App::Scene
 	static inline const int32 MAX_MARKER = 4;
 
 	// マーカー設置インターバル(秒)
-	static inline const double MARKER_INTERVAL = 0.5;
+	static inline const double MARKER_INTERVAL = 0.75;
 
 	// 敵出現可能数
 	static inline const int32 MAX_ENEMY = 10;
@@ -26,7 +27,7 @@ class Game : public App::Scene
 	static inline const double INVINCIBLE_DURATION = 1.25;
 
 	// 体力回復値
-	static inline const double POWER_REGENERATION = 3.0;
+	static inline const double POWER_REGENERATION = 5.5;
 
 public:
 	Game(const InitData& init);
@@ -83,11 +84,15 @@ private:
 	int32 gameKillCount = 0;
 
 	// 敵データ格納用配列
-	Array<Enemy> enemys;
+	Array<Enemy*> enemys;
+
+	// ステージのスコア状況(難易度3つ分)
+	StageStatus diffs[3]; // easy, normal, hard
 
 	void CountdownTimer(const double deltaTime);
 	void SpawnEnemy(const double deltaTime);
 	void MovePlayer(const double deltaTime);
+	void RemoveEnemy();
 	void ConsumePower(const double deltaTime);
 	void RegeneratePower(const double deltaTime);
 	void PlaceMarker(const double deltaTime);
@@ -95,4 +100,9 @@ private:
 	void CheckCollision();
 	void OnInvincible(const double deltaTime);
 	void SaveData();
+	void WriteData();
+
+	void DrawTimer(double value) const;
+	void DrawLife(int32 value) const;
+	void DrawPower(double value) const;
 };

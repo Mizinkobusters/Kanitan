@@ -3,20 +3,81 @@
 Option::Option(const InitData& init)
 	: IScene{ init }
 {
+	valueBGM = getData().valueBGM;
+	valueSE = getData().valueSE;
+
 	AudioAsset(U"Title").stop();
 	AudioAsset(U"Game").stop();
 	AudioAsset(U"Result").stop();
 	AudioAsset(U"Sazanami").stop();
 	// BGMを流す
-	AudioAsset(U"Result").play();
+	AudioAsset(U"Result").setVolume(valueBGM).play();
 
+	// ボタン用スタイルを設定
+	quitStyle = SimpleButton::ButtonStyle(Palette::Silver, Palette::Deepskyblue, U"Common", { 40, 0 }, 40.0);
+	buttonStyle = SimpleButton::ButtonStyle(Palette::Silver, Palette::Deepskyblue, U"Common", { 0, 0 }, 20.0);
+
+	// ボタンを定義
+	quitButton = new SimpleButton(quitRect, U"タイトルへ", quitStyle, true);
+	bgmmButton = new SimpleButton(bgmmRect, U"-", buttonStyle, true);
+	bgmpButton = new SimpleButton(bgmpRect, U"+", buttonStyle, true);
+	semButton = new SimpleButton(semRect, U"-", buttonStyle, true);
+	sepButton = new SimpleButton(sepRect, U"+", buttonStyle, true);
 }
 
 void Option::update()
 {
-	if (buttonQuit.leftClicked())
+	if (quitButton->isLeftClicked())
 	{
+		// データ保存
+		getData().valueBGM = valueBGM;
+		getData().valueSE = valueSE;
+
+		CSV option{ OPTION_DATA };
+		option[0][0] = Format(valueBGM);
+		option[0][1] = Format(valueSE);
+
+		// シーン変更
 		changeScene(State_Title);
+	}
+
+	Decrase(bgmmButton, bgmmRect, valueBGM);
+	Decrase(semButton, semRect, valueSE);
+	Increase(bgmpButton, bgmpRect, valueBGM);
+	Increase(sepButton, sepRect, valueSE);
+
+	AudioAsset(U"Result").fadeVolume(valueBGM * 0.1, 0.0s);
+}
+
+void Option::Decrase(SimpleButton*& button, RectF& rect, int32& value)
+{
+	if (value <= 0)
+	{
+		button = new SimpleButton(rect, U"-", buttonStyle, false);
+	}
+	else
+	{
+		button = new SimpleButton(rect, U"-", buttonStyle, true);
+		if (button->isLeftClicked())
+		{
+			value--;
+		}
+	}
+}
+
+void Option::Increase(SimpleButton*& button, RectF& rect, int32& value)
+{
+	if (value >= 10)
+	{
+		button = new SimpleButton(rect, U"+", buttonStyle, false);
+	}
+	else
+	{
+		button = new SimpleButton(rect, U"+", buttonStyle, true);
+		if (button->isLeftClicked())
+		{
+			value++;
+		}
 	}
 }
 
@@ -34,15 +95,33 @@ void Option::draw() const
 		FontAsset(U"Common")(U"オプション").drawBase(75, center, Palette::Deepskyblue);
 	}
 
-	// マウスオーバー時
-	if (buttonQuit.stretched(40, 0).mouseOver())
+	// BGMを表示
 	{
-		buttonQuit.stretched(40, 0).rounded(40).draw(Palette::Silver);
-		FontAsset(U"Common")(U"タイトルへ").drawAt(40, buttonQuit.center(), Palette::Deepskyblue);
+		Vec2 center{ 50, 175 };
+		FontAsset(U"Common")(U"BGM").drawBase(30, center.movedBy(3, 3), ColorF{ 0.0,0.5 });
+		FontAsset(U"Common")(U"BGM").drawBase(30, center, Palette::Deepskyblue);
+
+		FontAsset(U"Common")(U"{}"_fmt(valueBGM)).drawAt(60, { SCREEN_SIZE.x / 2, 250 }, Palette::White);
+
+		bgmmButton->draw();
+		bgmpButton->draw();
+
 	}
-	else
+
+	// SEを表示
 	{
-		buttonQuit.stretched(40, 0).rounded(40).drawFrame(3, Palette::Silver);
-		FontAsset(U"Common")(U"タイトルへ").drawAt(40, buttonQuit.center(), Palette::Silver);
+		Vec2 center{ 50, 325 };
+		FontAsset(U"Common")(U"SE").drawBase(30, center.movedBy(3, 3), ColorF{ 0.0,0.5 });
+		FontAsset(U"Common")(U"SE").drawBase(30, center, Palette::Deepskyblue);
+
+		FontAsset(U"Common")(U"{}"_fmt(valueSE)).drawAt(60, { SCREEN_SIZE.x / 2, 400 }, Palette::White);
+
+		semButton->draw();
+		sepButton->draw();
+	}
+
+	// ボタンを表示
+	{
+		quitButton->draw();
 	}
 }
