@@ -4,7 +4,7 @@ Result::Result(const InitData& init)
 	: IScene{ init }
 {
 	// BGMを流す
-	double value = getData().valueBGM / 10;
+	double value = getData().valueBGM * 0.1;
 	AudioAsset(U"Result").setVolume(value).play();
 
 	// ランクを算出

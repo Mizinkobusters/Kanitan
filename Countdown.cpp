@@ -37,7 +37,7 @@ void Countdown::draw() const
 		else
 		{
 			FontAsset(U"Common")(U"{:.0f}"_fmt(timer)).drawAt(100, Scene::CenterF());
-			AudioAsset(U"Countdown").setVolume(getData().valueSE).play();
+			AudioAsset(U"Countdown").setVolume(getData().valueSE * 0.1).play();
 		}
 	}
 

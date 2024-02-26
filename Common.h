@@ -33,7 +33,7 @@ enum StageDifficulty
 // ランクボーダー
 enum Rank
 {
-	Rank_S = 25,
+	Rank_S = 30,
 	Rank_A = 20,
 	Rank_B = 15,
 	Rank_C = 10,

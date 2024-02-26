@@ -50,7 +50,7 @@ StageSelect::StageSelect(const InitData& init)
 	collectionStyle = quitStyle;
 
 	// ボタンを定義
-	collectionButton = new SimpleButton(collectionRect, U"コレクション", collectionStyle, true);
+	collectionButton = new SimpleButton(collectionRect, U"データリセット", collectionStyle, true);
 };
 
 void StageSelect::update()
@@ -77,6 +77,29 @@ void StageSelect::update()
 		getData().diff = StageDifficulty::Diff_Hard;
 		changeScene(State_Countdown, 0.5s);
 	}
+
+	// データリセット
+	if (collectionButton->isLeftClicked())
+	{
+		CSV data{ SCORE_DATA };
+		for (int32 row = 0; row < data.rows(); ++row)
+		{
+			diffs[row].isNoDamage = false;
+			diffs[row].doesGetSRank =  false;
+			diffs[row].score = 0;
+			diffs[row].maxCombo = 0;
+			diffs[row].killCount = 0;
+
+			data[row][1] = Format(false);
+			data[row][2] = Format(false);
+			data[row][3] = Format(0);
+			data[row][4] = Format(0);
+			data[row][5] = Format(0);
+		}
+
+		data.save(SCORE_DATA);
+
+	}
 }
 
 void StageSelect::draw() const
@@ -100,7 +123,7 @@ void StageSelect::draw() const
 
 	// コレクションボタンを描画
 	{
-		// collectionButton->draw();
+		collectionButton->draw();
 	}
 
 	// 選択ボタンを描画

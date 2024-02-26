@@ -39,7 +39,7 @@ void Title::update()
 		if (menuButtons[0]->isLeftClicked())
 		{
 			changeScene(State_StageSelect);
-			AudioAsset(U"Select").play();
+			AudioAsset(U"Select").setVolume(getData().valueSE * 0.1).play();
 		}
 		else if (menuButtons[1]->isLeftClicked())
 		{

@@ -11,7 +11,7 @@ Option::Option(const InitData& init)
 	AudioAsset(U"Result").stop();
 	AudioAsset(U"Sazanami").stop();
 	// BGMを流す
-	AudioAsset(U"Result").setVolume(valueBGM).play();
+	AudioAsset(U"Result").setVolume(valueBGM * 0.1).play();
 
 	// ボタン用スタイルを設定
 	quitStyle = SimpleButton::ButtonStyle(Palette::Silver, Palette::Deepskyblue, U"Common", { 40, 0 }, 40.0);
@@ -36,6 +36,8 @@ void Option::update()
 		CSV option{ OPTION_DATA };
 		option[0][0] = Format(valueBGM);
 		option[0][1] = Format(valueSE);
+
+		option.save(OPTION_DATA);
 
 		// シーン変更
 		changeScene(State_Title);

@@ -242,7 +242,7 @@ void Game::ConsumePower(const double deltaTime)
 	if (playerPower <= 0.0)
 	{
 		playerIsStan = true;
-		AudioAsset(U"Stan").setVolume(getData().valueSE).play();
+		AudioAsset(U"Stan").setVolume(getData().valueSE * 0.1).play();
 	}
 
 	// プレイヤーの体力が範囲外にならないようにする
@@ -345,7 +345,7 @@ void Game::ClearMarker()
 			iter = enemys.erase(iter);
 			// SE鳴らす
 			AudioAsset(U"Attack").stop();
-			AudioAsset(U"Attack").setVolume(getData().valueSE).play();
+			AudioAsset(U"Attack").setVolume(getData().valueSE * 0.1).play();
 		}
 		else
 		{
@@ -392,7 +392,7 @@ void Game::CheckCollision()
 			playerIsInvincible = true;
 			//SEを鳴らす
 			AudioAsset(U"Damage").stop();
-			AudioAsset(U"Damage").setVolume(getData().valueSE).play();
+			AudioAsset(U"Damage").setVolume(getData().valueSE * 0.1).play();
 		}
 		else
 		{
@@ -445,7 +445,11 @@ void Game::SaveData()
 void Game::WriteData()
 {
 	int32 row = getData().diff;
-	bool isPlayable = diffs[row].isPlayable;
+	bool isPlayable;
+	if (row + 1 < StageDifficulty::Diff_Max)
+	{
+		isPlayable = diffs[row + 1].isPlayable;
+	}
 	bool isNoDamage = diffs[row].isNoDamage;
 	bool doesGetSRank = diffs[row].doesGetSRank;
 	int32 score = diffs[row].score;

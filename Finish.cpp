@@ -8,7 +8,7 @@ Finish::Finish(const InitData& init)
 	AudioAsset(U"Result").stop();
 	AudioAsset(U"Sazanami").stop();
 
-	AudioAsset(U"Finish").setVolume(getData().valueSE).play();
+	AudioAsset(U"Finish").setVolume(getData().valueSE * 0.1).play();
 }
 
 void Finish::update()
